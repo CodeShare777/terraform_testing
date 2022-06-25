@@ -1,0 +1,1 @@
+bucket         = "farid-test-lambda"
