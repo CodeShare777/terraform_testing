@@ -10,7 +10,7 @@ provider "aws" {
 }
 
 variable "lambda_function_name" {
-  default = "lambda_function_name"
+  default = "scheduler-lambda"
 }
 
 data "archive_file" "lambda_my_function" {
@@ -43,4 +43,24 @@ resource "aws_lambda_function" "test_lambda" {
     aws_iam_role_policy_attachment.lambda_logs,
     aws_cloudwatch_log_group.log_grouping,
   ]
+}
+
+resource "aws_cloudwatch_event_rule" "every_five_minutes_rule" {
+    name = "every-five-minutes"
+    description = "Fires every five minutes"
+    schedule_expression = "rate(5 minutes)"
+}
+
+resource "aws_cloudwatch_event_target" "check_lambda_every_five_minutes" {
+    rule = aws_cloudwatch_event_rule.every_five_minutes_rule.name
+    target_id = "test_lambda"
+    arn = aws_lambda_function.test_lambda.arn
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_to_call_test_lambda" {
+    statement_id = "AllowExecutionFromCloudWatch"
+    action = "lambda:InvokeFunction"
+    function_name = aws_lambda_function.test_lambda.function_name
+    principal = "events.amazonaws.com"
+    source_arn = aws_cloudwatch_event_rule.every_five_minutes_rule.arn
 }
