@@ -36,7 +36,7 @@ resource "aws_lambda_function" "spoc_lambda" {
 
   depends_on = [
     aws_iam_role_policy_attachment.lambda_logs,
-    # aws_cloudwatch_log_group.log_grouping,
+    aws_cloudwatch_log_group.log_grouping,
   ]
 }
 
@@ -64,10 +64,11 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_call_spoc_lambda" {
 
 # This is to optionally manage the CloudWatch Log Group for the Lambda Function.
 # If skipping this resource configuration, also add "logs:CreateLogGroup" to the IAM policy below.
-# resource "aws_cloudwatch_log_group" "log_grouping" {
-#   name              = "/aws/lambda/${var.lambda_function_name}"
-#   retention_in_days = 14
-# }
+resource "aws_cloudwatch_log_group" "log_grouping" {
+  count             = length(var.services_list)
+  name              = "/aws/lambda/${var.services_list[count.index]["lambda_func_name"]}"
+  retention_in_days = 14
+}
 
 resource "aws_iam_role" "iam_for_lambda" {
   name = "iam_for_lambda"
