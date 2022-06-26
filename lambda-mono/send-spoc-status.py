@@ -1,6 +1,5 @@
 # Gather and send health-checks from different services and send to SPoC (Single Point of Contact) 
 # dashboard. The health-checks are gathered using the API, based on the API described here:
-# https://github.com/otto-ec/spoc_status-api/blob/master/API.md
 
 import os
 import sys
@@ -35,7 +34,6 @@ logging.getLogger().setLevel(logging.INFO)
 
 @dataclass
 class Config:
-    hostname: str = f"https://status-api.{environment}.spoc.cloud.otto.de"
     year: str = str(date.today().year)
     last_year: str = str(date.today().year-1)
     client_key_filename: str = f"status-api-client-{year}.key.pem"
@@ -43,7 +41,6 @@ class Config:
     client_cert_filename: str = f"status-api-client-{year}.crt.pem"
     client_cert_filename_last_year: str = f"status-api-client-{last_year}.crt.pem"
     dest_dir: str = "/tmp"
-    cert_bucket: str = f"de-otto-spoc-status-api-ca-{spoc_aws_region}-{spoc_account_id}"
     secrets_arn: str = f"arn:aws:secretsmanager:{spoc_aws_region}:{spoc_account_id}:secret:/status-api/client_credential/api-quality-1"
     cognito_url: str = f"https://status-api-{environment}-{spoc_account_id}.auth.{spoc_aws_region}.amazoncognito.com/token"
     metadata_endpoint: str = "/v1/metadata"
