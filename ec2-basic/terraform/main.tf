@@ -9,7 +9,7 @@ provider "aws" {
   region     = "eu-central-1"
 }
 
-resource "aws_instance" "myec2" {
-   ami = "ami-09439f09c55136ecf"
-   instance_type = var.basic_ec2_type
+module "ec2-module" {
+  source = "./modules/test-module"
+  basic_ec2_type = var.central_ec2_type
 }
