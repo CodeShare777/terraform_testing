@@ -11,4 +11,5 @@ provider "aws" {
 
 module "lambda-module" {
   source = "./modules/lambda"
+  services_list = var.central_services_list
 }

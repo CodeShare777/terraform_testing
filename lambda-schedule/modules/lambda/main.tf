@@ -6,11 +6,11 @@ data "archive_file" "lambda_my_function" {
 }
 
 resource "aws_lambda_function" "test_lambda" {
+  count         = length(var.services_list)
   function_name = var.services_list[count.index]["lambda_func_name"]
   filename      = "${path.root}/lambda/lambda_function_payload.zip"
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "scheduled.lambda_handler"
-  count         = length(var.services_list)
 
   source_code_hash = filebase64sha256("lambda/lambda_function_payload.zip")
 
@@ -30,16 +30,16 @@ resource "aws_lambda_function" "test_lambda" {
 }
 
 resource "aws_cloudwatch_event_rule" "every_five_minutes_rule" {
-  name = "every-five-minutes"
-  description = "Fires every five minutes"
+  name                = "every-five-minutes"
+  description         = "Fires every five minutes"
   schedule_expression = "rate(5 minutes)"
 }
 
 resource "aws_cloudwatch_event_target" "check_lambda_every_five_minutes" {
+  count     = length(var.services_list)
   rule      = aws_cloudwatch_event_rule.every_five_minutes_rule.name
   target_id = "test_lambda_${count.index}"
   arn       = aws_lambda_function.test_lambda[count.index].arn
-  count     = length(var.services_list)
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_call_test_lambda" {
