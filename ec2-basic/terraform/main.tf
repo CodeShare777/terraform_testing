@@ -10,6 +10,6 @@ provider "aws" {
 }
 
 module "ec2-module" {
-  source = "./modules/test-module"
+  source = "./modules/ec2-module"
   basic_ec2_type = var.central_ec2_type
 }
