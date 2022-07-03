@@ -9,6 +9,7 @@ from datetime import date
 from dataclasses import dataclass
 import urllib3
 http = urllib3.PoolManager()
+#Made a change in the new branch. 
 
 spoc_aws_region = os.environ.get("AWS_REGION", "eu-central-1")
 assert spoc_aws_region
